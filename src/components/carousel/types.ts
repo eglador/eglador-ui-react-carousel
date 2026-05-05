@@ -17,6 +17,7 @@ export type CarouselOptions = Omit<EmblaOptionsType, "breakpoints"> &
 export type CarouselOrientation = "horizontal" | "vertical";
 
 export type CarouselButtonPosition =
+  // Overlay (carousel üzerinde)
   | "top-left"
   | "top-center"
   | "top-right"
@@ -24,7 +25,33 @@ export type CarouselButtonPosition =
   | "center-right"
   | "bottom-left"
   | "bottom-center"
+  | "bottom-right"
+  // Outside (carousel'in dışında)
+  | "top-outside"
+  | "bottom-outside"
+  | "left-outside"
+  | "right-outside"
+  | "top-left-outside"
+  | "top-right-outside"
+  | "bottom-left-outside"
+  | "bottom-right-outside";
+
+export type CarouselOverlayPosition =
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
   | "bottom-right";
+
+export type CarouselPaginationType =
+  | "dots"
+  | "fraction"
+  | "numbers"
+  | "dynamic"
+  | "scrollbar";
 
 export type CarouselPaginationPosition =
   // Center overlay
@@ -60,4 +87,6 @@ export interface CarouselContextValue {
   scrollSnaps: number[];
   scrollTo: (index: number) => void;
   resolvedSlidesPerView: number | "auto" | undefined;
+  spaceBetween: number;
+  autoHeight: boolean;
 }

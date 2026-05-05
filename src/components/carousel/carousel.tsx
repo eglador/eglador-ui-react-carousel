@@ -21,6 +21,8 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   parallax?: boolean | { factor?: number };
   opacity?: boolean | { factor?: number; min?: number };
   watchImages?: boolean;
+  autoHeight?: boolean;
+  spaceBetween?: number;
 }
 
 export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
@@ -33,6 +35,8 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       parallax,
       opacity,
       watchImages,
+      autoHeight = false,
+      spaceBetween = 0,
       className,
       children,
       onKeyDown,
@@ -166,8 +170,10 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       };
     }, [api, parallax, opacity, orientation]);
 
+    const shouldWatchImages = watchImages || autoHeight;
+
     React.useEffect(() => {
-      if (!api || !watchImages) return;
+      if (!api || !shouldWatchImages) return;
 
       const handleLoad = () => api.reInit();
       const cleanups: (() => void)[] = [];
@@ -185,7 +191,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       });
 
       return () => cleanups.forEach((fn) => fn());
-    }, [api, watchImages]);
+    }, [api, shouldWatchImages]);
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -223,6 +229,8 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         scrollSnaps,
         scrollTo,
         resolvedSlidesPerView,
+        spaceBetween,
+        autoHeight,
       }),
       [
         carouselRef,
@@ -236,6 +244,8 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         scrollSnaps,
         scrollTo,
         resolvedSlidesPerView,
+        spaceBetween,
+        autoHeight,
       ],
     );
 

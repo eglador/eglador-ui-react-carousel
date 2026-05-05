@@ -7,25 +7,57 @@ import { useCarousel } from "./context";
 import type { CarouselButtonPosition } from "./types";
 
 const BUTTON_POSITION: Record<CarouselButtonPosition, string> = {
-  "top-left": "absolute top-2 left-2 z-10",
-  "top-center": "absolute top-2 left-1/2 -translate-x-1/2 z-10",
-  "top-right": "absolute top-2 right-2 z-10",
-  "center-left": "absolute top-1/2 left-2 -translate-y-1/2 z-10",
-  "center-right": "absolute top-1/2 right-2 -translate-y-1/2 z-10",
-  "bottom-left": "absolute bottom-2 left-2 z-10",
-  "bottom-center": "absolute bottom-2 left-1/2 -translate-x-1/2 z-10",
-  "bottom-right": "absolute bottom-2 right-2 z-10",
+  // Overlay
+  "top-left": "absolute top-3 left-3 z-10",
+  "top-center": "absolute top-3 left-1/2 -translate-x-1/2 z-10",
+  "top-right": "absolute top-3 right-3 z-10",
+  "center-left": "absolute top-1/2 left-3 -translate-y-1/2 z-10",
+  "center-right": "absolute top-1/2 right-3 -translate-y-1/2 z-10",
+  "bottom-left": "absolute bottom-3 left-3 z-10",
+  "bottom-center": "absolute bottom-3 left-1/2 -translate-x-1/2 z-10",
+  "bottom-right": "absolute bottom-3 right-3 z-10",
+  // Outside
+  "top-outside":
+    "absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-10",
+  "bottom-outside":
+    "absolute top-full left-1/2 -translate-x-1/2 mt-3 z-10",
+  "left-outside":
+    "absolute right-full top-1/2 -translate-y-1/2 mr-3 z-10",
+  "right-outside":
+    "absolute left-full top-1/2 -translate-y-1/2 ml-3 z-10",
+  "top-left-outside": "absolute bottom-full left-0 mb-3 z-10",
+  "top-right-outside": "absolute bottom-full right-0 mb-3 z-10",
+  "bottom-left-outside": "absolute top-full left-0 mt-3 z-10",
+  "bottom-right-outside": "absolute top-full right-0 mt-3 z-10",
 };
 
 const GROUP_POSITION: Record<CarouselButtonPosition, string> = {
-  "top-left": "absolute top-2 left-2 z-10 flex flex-row gap-2",
-  "top-center": "absolute top-2 left-1/2 -translate-x-1/2 z-10 flex flex-row gap-2",
-  "top-right": "absolute top-2 right-2 z-10 flex flex-row gap-2",
-  "center-left": "absolute top-1/2 left-2 -translate-y-1/2 z-10 flex flex-col gap-2",
-  "center-right": "absolute top-1/2 right-2 -translate-y-1/2 z-10 flex flex-col gap-2",
-  "bottom-left": "absolute bottom-2 left-2 z-10 flex flex-row gap-2",
-  "bottom-center": "absolute bottom-2 left-1/2 -translate-x-1/2 z-10 flex flex-row gap-2",
-  "bottom-right": "absolute bottom-2 right-2 z-10 flex flex-row gap-2",
+  // Overlay
+  "top-left": "absolute top-3 left-3 z-10 flex flex-row gap-2",
+  "top-center": "absolute top-3 left-1/2 -translate-x-1/2 z-10 flex flex-row gap-2",
+  "top-right": "absolute top-3 right-3 z-10 flex flex-row gap-2",
+  "center-left": "absolute top-1/2 left-3 -translate-y-1/2 z-10 flex flex-col gap-2",
+  "center-right": "absolute top-1/2 right-3 -translate-y-1/2 z-10 flex flex-col gap-2",
+  "bottom-left": "absolute bottom-3 left-3 z-10 flex flex-row gap-2",
+  "bottom-center": "absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex flex-row gap-2",
+  "bottom-right": "absolute bottom-3 right-3 z-10 flex flex-row gap-2",
+  // Outside
+  "top-outside":
+    "absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-10 flex flex-row gap-2",
+  "bottom-outside":
+    "absolute top-full left-1/2 -translate-x-1/2 mt-3 z-10 flex flex-row gap-2",
+  "left-outside":
+    "absolute right-full top-1/2 -translate-y-1/2 mr-3 z-10 flex flex-col gap-2",
+  "right-outside":
+    "absolute left-full top-1/2 -translate-y-1/2 ml-3 z-10 flex flex-col gap-2",
+  "top-left-outside":
+    "absolute bottom-full left-0 mb-3 z-10 flex flex-row gap-2",
+  "top-right-outside":
+    "absolute bottom-full right-0 mb-3 z-10 flex flex-row gap-2",
+  "bottom-left-outside":
+    "absolute top-full left-0 mt-3 z-10 flex flex-row gap-2",
+  "bottom-right-outside":
+    "absolute top-full right-0 mt-3 z-10 flex flex-row gap-2",
 };
 
 const BUTTON_BASE =

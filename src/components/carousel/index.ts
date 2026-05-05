@@ -7,6 +7,7 @@ export {
   CarouselNavigation,
 } from "./navigation";
 export { CarouselPagination } from "./pagination";
+export { CarouselAutoplayProgress } from "./autoplay-progress";
 export { useCarousel } from "./context";
 
 export type {
@@ -15,7 +16,9 @@ export type {
   CarouselOptions,
   CarouselOrientation,
   CarouselButtonPosition,
+  CarouselOverlayPosition,
   CarouselPaginationPosition,
+  CarouselPaginationType,
 } from "./types";
 export type { CarouselProps } from "./carousel";
 export type {
@@ -23,3 +26,4 @@ export type {
   CarouselNavigationProps,
 } from "./navigation";
 export type { CarouselPaginationProps } from "./pagination";
+export type { CarouselAutoplayProgressProps } from "./autoplay-progress";

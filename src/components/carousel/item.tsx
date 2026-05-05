@@ -8,18 +8,26 @@ export const CarouselItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(function CarouselItem({ className, style, ...props }, ref) {
-  const { resolvedSlidesPerView } = useCarousel();
+  const { resolvedSlidesPerView, orientation, spaceBetween } = useCarousel();
 
   const itemStyle = React.useMemo<React.CSSProperties | undefined>(() => {
+    const spacing =
+      spaceBetween > 0
+        ? orientation === "horizontal"
+          ? { paddingLeft: `${spaceBetween}px` }
+          : { paddingTop: `${spaceBetween}px` }
+        : undefined;
+
     if (typeof resolvedSlidesPerView === "number") {
       return {
         flex: `0 0 ${100 / resolvedSlidesPerView}%`,
         minWidth: 0,
+        ...spacing,
         ...style,
       };
     }
-    return style;
-  }, [resolvedSlidesPerView, style]);
+    return { ...spacing, ...style };
+  }, [resolvedSlidesPerView, orientation, spaceBetween, style]);
 
   const sizingClass =
     typeof resolvedSlidesPerView === "number" || resolvedSlidesPerView === "auto"
