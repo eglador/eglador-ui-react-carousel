@@ -393,7 +393,7 @@ export function Carousel({
   }
 
   return (
-    <div className={cn(isRTL && "direction-rtl", className)} dir={isRTL ? "rtl" : undefined}>
+    <div className={className} dir={isRTL ? "rtl" : undefined}>
       <div
         className={cn("overflow-hidden", isVertical && "h-125", autoHeight && "transition-[height] duration-200", viewportClassName)}
         ref={emblaRef}
@@ -414,7 +414,7 @@ export function Carousel({
               >
                 <div className={cn("carousel__parallax-layer w-full", !autoHeight && "h-full")}>
                   {isLoaded ? slide : (
-                    <div className="w-full h-full bg-zinc-100/10 animate-pulse rounded-lg min-h-50" />
+                    <div className="w-full h-full bg-zinc-100 animate-pulse rounded-lg min-h-50" />
                   )}
                 </div>
               </div>

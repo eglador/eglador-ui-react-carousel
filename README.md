@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/eglador-ui-react-carousel?style=flat-square&color=blue)](https://www.npmjs.com/package/eglador-ui-react-carousel)
 [![npm downloads](https://img.shields.io/npm/dm/eglador-ui-react-carousel?style=flat-square&color=green)](https://www.npmjs.com/package/eglador-ui-react-carousel)
-[![license](https://img.shields.io/npm/l/eglador-ui-react-carousel?style=flat-square)](https://github.com/kenangundogan/eglador-ui-react-carousel/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/eglador-ui-react-carousel?style=flat-square)](https://github.com/eglador/eglador-ui-react-carousel/blob/main/LICENSE)
 ![tailwind v4](https://img.shields.io/badge/tailwindcss-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
 ![react >= 18](https://img.shields.io/badge/react-%3E%3D18-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![typescript](https://img.shields.io/badge/typescript-ready-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -63,7 +63,9 @@ Works with any React-based framework: **Next.js**, **Remix**, **Vite + React**, 
 
 ## Author
 
-Eglador — [https://github.com/eglador](https://github.com/eglador)
+Kenan Gündoğan — [https://github.com/kenangundogan](https://github.com/kenangundogan)
+
+Maintained under [Eglador](https://github.com/eglador)
 
 ## License
 
