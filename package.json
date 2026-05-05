@@ -1,0 +1,66 @@
+{
+  "name": "eglador-ui-react-carousel",
+  "version": "1.0.0-alpha.1",
+  "description": "React Carousel component for Eglador UI",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eglador/eglador-ui-react-carousel.git"
+  },
+  "keywords": [
+    "eglador",
+    "components",
+    "react",
+    "ui",
+    "carousel"
+  ],
+  "author": "Eglador",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/eglador/eglador-ui-react-carousel/issues"
+  },
+  "homepage": "https://github.com/eglador/eglador-ui-react-carousel#readme",
+  "dependencies": {
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-auto-height": "^8.6.0",
+    "embla-carousel-auto-scroll": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-class-names": "^8.6.0",
+    "embla-carousel-fade": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "embla-carousel-wheel-gestures": "^8.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
+  }
+}
