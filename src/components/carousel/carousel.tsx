@@ -6,18 +6,6 @@ import type { EmblaOptionsType, EmblaCarouselType, EmblaPluginType } from "embla
 import { cn } from "../../lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "../../lib/icons";
 
-// ── Dynamic plugin imports ───────────────────
-
-async function loadPlugin(name: string, opts: Record<string, unknown> = {}) {
-  try {
-    const mod = await import(/* @vite-ignore */ name);
-    const factory = mod.default || mod;
-    return factory(opts);
-  } catch {
-    return null;
-  }
-}
-
 // ── Types ────────────────────────────────────
 
 export type CarouselBreakpointOptions = EmblaOptionsType & {
@@ -196,35 +184,35 @@ export function Carousel({
     let cancelled = false;
 
     async function buildPlugins() {
-      const active: (EmblaPluginType | null)[] = [];
+      const active: EmblaPluginType[] = [];
 
       if (autoplay) {
-        const opts = typeof autoplay === "object" ? autoplay : { delay: 4000 };
-        active.push(await loadPlugin("embla-carousel-autoplay", opts));
+        const { default: Autoplay } = await import("embla-carousel-autoplay");
+        active.push(Autoplay(typeof autoplay === "object" ? autoplay : { delay: 4000 }));
       }
       if (autoScroll) {
-        const opts = typeof autoScroll === "object" ? autoScroll : { speed: 2 };
-        active.push(await loadPlugin("embla-carousel-auto-scroll", opts));
+        const { default: AutoScroll } = await import("embla-carousel-auto-scroll");
+        active.push(AutoScroll(typeof autoScroll === "object" ? autoScroll : { speed: 2 }));
       }
       if (autoHeight) {
-        const opts = typeof autoHeight === "object" ? autoHeight : {};
-        active.push(await loadPlugin("embla-carousel-auto-height", opts));
+        const { default: AutoHeight } = await import("embla-carousel-auto-height");
+        active.push(AutoHeight(typeof autoHeight === "object" ? autoHeight : {}));
       }
       if (fadeProp) {
-        const opts = typeof fadeProp === "object" ? fadeProp : {};
-        active.push(await loadPlugin("embla-carousel-fade", opts));
+        const { default: Fade } = await import("embla-carousel-fade");
+        active.push(Fade(typeof fadeProp === "object" ? fadeProp : {}));
       }
       if (wheelGesturesProp) {
-        const opts = typeof wheelGesturesProp === "object" ? wheelGesturesProp : {};
-        active.push(await loadPlugin("embla-carousel-wheel-gestures", opts));
+        const { default: WheelGestures } = await import("embla-carousel-wheel-gestures");
+        active.push(WheelGestures(typeof wheelGesturesProp === "object" ? wheelGesturesProp : {}));
       }
       if (classNamesProp) {
-        const opts = typeof classNamesProp === "object" ? classNamesProp : {};
-        active.push(await loadPlugin("embla-carousel-class-names", opts));
+        const { default: ClassNames } = await import("embla-carousel-class-names");
+        active.push(ClassNames(typeof classNamesProp === "object" ? classNamesProp : {}));
       }
 
       if (!cancelled) {
-        setPlugins(active.filter(Boolean) as EmblaPluginType[]);
+        setPlugins(active);
         setPluginsReady(true);
       }
     }
@@ -400,7 +388,7 @@ export function Carousel({
   const isVertical = axis === "y";
   const isRTL = direction === "rtl";
 
-  if (!pluginsReady && (autoplay || autoScroll || autoHeight || fadeProp || classNamesProp)) {
+  if (!pluginsReady && (autoplay || autoScroll || autoHeight || fadeProp || wheelGesturesProp || classNamesProp)) {
     return null;
   }
 

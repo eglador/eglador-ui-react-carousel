@@ -6,7 +6,7 @@ export default defineConfig({
   dts: true,
   tsconfig: "tsconfig.build.json",
   clean: true,
-  sourcemap: true,
+  sourcemap: false,
   minify: true,
   external: ["react", "react-dom", /^embla-carousel/],
   noExternal: ["clsx", "tailwind-merge"],
