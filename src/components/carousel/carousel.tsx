@@ -107,66 +107,117 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       setApi(api);
     }, [api, setApi]);
 
+    // Parallax + Opacity tween — Embla resmi örneği ile birebir uyumlu
+    // (slideRegistry, slideLooper.loopPoints, slidesInView kullanır)
     React.useEffect(() => {
       if (!api || (!parallax && !opacity)) return;
 
-      const parallaxFactor =
+      const TWEEN_FACTOR_BASE = 0.2;
+
+      const userParallaxFactor =
         parallax && typeof parallax === "object" && parallax.factor !== undefined
           ? parallax.factor
-          : 15;
-      const opacityFactor =
+          : TWEEN_FACTOR_BASE;
+      const userOpacityFactor =
         opacity && typeof opacity === "object" && opacity.factor !== undefined
           ? opacity.factor
-          : 2.5;
+          : TWEEN_FACTOR_BASE;
       const opacityMin =
         opacity && typeof opacity === "object" && opacity.min !== undefined
           ? opacity.min
           : 0.3;
 
-      const tween = () => {
+      let parallaxFactor = userParallaxFactor;
+      let opacityFactor = userOpacityFactor;
+
+      const setTweenFactors = () => {
+        const snapCount = api.scrollSnapList().length;
+        parallaxFactor = userParallaxFactor * snapCount;
+        opacityFactor = userOpacityFactor * snapCount;
+      };
+
+      const tween = (eventName?: string) => {
         const engine = api.internalEngine();
         const scrollProgress = api.scrollProgress();
+        const slidesInView = api.slidesInView();
         const slideNodes = api.slideNodes();
-        const locations = api.scrollSnapList();
+        const isScrollEvent = eventName === "scroll";
 
-        slideNodes.forEach((slide, index) => {
-          const target =
-            (slide.querySelector("[data-carousel-parallax]") as HTMLElement | null) ??
-            slide;
-          let distance = locations[index] - scrollProgress;
+        api.scrollSnapList().forEach((scrollSnap, snapIndex) => {
+          let diffToTarget = scrollSnap - scrollProgress;
+          const slidesInSnap = engine.slideRegistry[snapIndex];
 
-          if (engine.options.loop) {
-            if (distance < -0.5) distance += 1;
-            if (distance > 0.5) distance -= 1;
-          }
+          slidesInSnap.forEach((slideIndex) => {
+            if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
 
-          if (parallax) {
-            const x = distance * parallaxFactor * 100;
-            target.style.transform =
-              orientation === "vertical"
-                ? `translate3d(0, ${x}%, 0)`
-                : `translate3d(${x}%, 0, 0)`;
-          }
+            if (engine.options.loop) {
+              engine.slideLooper.loopPoints.forEach((loopItem) => {
+                const target = loopItem.target();
+                if (slideIndex === loopItem.index && target !== 0) {
+                  const sign = Math.sign(target);
+                  if (sign === -1) {
+                    diffToTarget = scrollSnap - (1 + scrollProgress);
+                  }
+                  if (sign === 1) {
+                    diffToTarget = scrollSnap + (1 - scrollProgress);
+                  }
+                }
+              });
+            }
 
-          if (opacity) {
-            const value = Math.max(0, 1 - Math.abs(distance * opacityFactor));
-            slide.style.opacity = (
-              opacityMin +
-              value * (1 - opacityMin)
-            ).toString();
-          }
+            const slide = slideNodes[slideIndex];
+            if (!slide) return;
+
+            if (parallax) {
+              const tweenNode =
+                (slide.querySelector(
+                  "[data-carousel-parallax]",
+                ) as HTMLElement | null) ?? slide;
+              const translate = diffToTarget * -parallaxFactor * 100;
+              tweenNode.style.transform =
+                orientation === "vertical"
+                  ? `translate3d(0, ${translate}%, 0)`
+                  : `translate3d(${translate}%, 0, 0)`;
+            }
+
+            if (opacity) {
+              const value = Math.max(
+                0,
+                1 - Math.abs(diffToTarget * opacityFactor),
+              );
+              slide.style.opacity = (
+                opacityMin +
+                value * (1 - opacityMin)
+              ).toString();
+            }
+          });
         });
       };
 
+      const onReInit = () => {
+        setTweenFactors();
+        tween("reInit");
+      };
+      const onResize = () => {
+        setTweenFactors();
+        tween("resize");
+      };
+      const onScroll = () => tween("scroll");
+      const onSlideFocus = () => tween("slideFocus");
+
+      setTweenFactors();
       tween();
-      api.on("scroll", tween);
-      api.on("reInit", tween);
-      api.on("resize", tween);
+
+      api.on("reInit", onReInit);
+      api.on("resize", onResize);
+      api.on("scroll", onScroll);
+      api.on("slideFocus", onSlideFocus);
 
       return () => {
-        api.off("scroll", tween);
-        api.off("reInit", tween);
-        api.off("resize", tween);
+        api.off("reInit", onReInit);
+        api.off("resize", onResize);
+        api.off("scroll", onScroll);
+        api.off("slideFocus", onSlideFocus);
       };
     }, [api, parallax, opacity, orientation]);
 
