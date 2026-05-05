@@ -41,7 +41,7 @@ type StoryArgs = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Carousel/Navigation Positions",
+  title: "Carousel/Navigation",
   tags: ["autodocs"],
   parameters: {
     layout: "padded",

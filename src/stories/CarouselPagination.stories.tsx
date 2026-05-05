@@ -79,7 +79,7 @@ function PaginationDemo({
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Carousel/Pagination Positions",
+  title: "Carousel/Pagination",
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
