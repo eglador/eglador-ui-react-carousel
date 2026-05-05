@@ -2,462 +2,260 @@
 
 import * as React from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import type { EmblaOptionsType, EmblaCarouselType, EmblaPluginType } from "embla-carousel";
+import type { EmblaOptionsType } from "embla-carousel";
 import { cn } from "../../lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon } from "../../lib/icons";
+import { CarouselContext } from "./context";
+import type {
+  CarouselApi,
+  CarouselContextValue,
+  CarouselOptions,
+  CarouselOrientation,
+  CarouselPlugin,
+} from "./types";
 
-// ── Types ────────────────────────────────────
-
-export type CarouselBreakpointOptions = EmblaOptionsType & {
-  slidesPerView?: number | "auto";
-};
-
-export interface CarouselProps {
-  slides: React.ReactNode[];
-
-  // Core
-  slidesPerView?: number | "auto";
-  align?: EmblaOptionsType["align"];
-  containScroll?: EmblaOptionsType["containScroll"];
-  dragFree?: boolean;
-  loop?: boolean;
-  axis?: "x" | "y";
-  direction?: "ltr" | "rtl";
-
-  // Plugins
-  autoplay?: boolean | Record<string, unknown>;
-  autoScroll?: boolean | Record<string, unknown>;
-  autoHeight?: boolean | Record<string, unknown>;
-  fade?: boolean | Record<string, unknown>;
-  wheelGestures?: boolean | Record<string, unknown>;
-  classNames?: boolean | Record<string, unknown>;
-
-  // Effects
-  parallax?: boolean;
-  opacity?: boolean;
-  lazyLoad?: boolean;
-
-  // Controls
-  showNavigation?: boolean;
-  showPagination?: boolean;
-  scrollToIndex?: number;
-
-  // Responsive
-  breakpoints?: Record<string, CarouselBreakpointOptions>;
-
-  // Styling
-  className?: string;
-  viewportClassName?: string;
-  containerClassName?: string;
-  slideClassName?: string;
-  styles?: {
-    controls?: string;
-    navigation?: string;
-    pagination?: string;
-    prevButton?: string;
-    nextButton?: string;
-    dot?: string;
-  };
+export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
+  opts?: CarouselOptions;
+  plugins?: CarouselPlugin[];
+  orientation?: CarouselOrientation;
+  setApi?: (api: CarouselApi) => void;
+  parallax?: boolean | { factor?: number };
+  opacity?: boolean | { factor?: number; min?: number };
+  watchImages?: boolean;
 }
 
-// ── Internal Hooks ───────────────────────────
+export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
+  function Carousel(
+    {
+      opts,
+      plugins,
+      orientation = "horizontal",
+      setApi,
+      parallax,
+      opacity,
+      watchImages,
+      className,
+      children,
+      onKeyDown,
+      ...props
+    },
+    ref,
+  ) {
+    const [carouselRef, api] = useEmblaCarousel(
+      {
+        ...opts,
+        axis: orientation === "horizontal" ? "x" : "y",
+      } as EmblaOptionsType,
+      plugins,
+    );
 
-function useDotButton(emblaApi: EmblaCarouselType | undefined) {
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([]);
+    const [canScrollPrev, setCanScrollPrev] = React.useState(false);
+    const [canScrollNext, setCanScrollNext] = React.useState(false);
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
+    const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([]);
+    const [resolvedSlidesPerView, setResolvedSlidesPerView] = React.useState<
+      number | "auto" | undefined
+    >(opts?.slidesPerView);
 
-  const onDotButtonClick = React.useCallback((index: number) => {
-    emblaApi?.scrollTo(index);
-  }, [emblaApi]);
+    const scrollPrev = React.useCallback(() => api?.scrollPrev(), [api]);
+    const scrollNext = React.useCallback(() => api?.scrollNext(), [api]);
+    const scrollTo = React.useCallback((i: number) => api?.scrollTo(i), [api]);
 
-  const onInit = React.useCallback((api: EmblaCarouselType) => {
-    setScrollSnaps(api.scrollSnapList());
-  }, []);
+    React.useEffect(() => {
+      if (!api) return;
 
-  const onSelect = React.useCallback((api: EmblaCarouselType) => {
-    setSelectedIndex(api.selectedScrollSnap());
-  }, []);
+      const onSelect = (a: CarouselApi) => {
+        setCanScrollPrev(a.canScrollPrev());
+        setCanScrollNext(a.canScrollNext());
+        setSelectedIndex(a.selectedScrollSnap());
+      };
 
-  React.useEffect(() => {
-    if (!emblaApi) return;
-    const id = setTimeout(() => { onInit(emblaApi); onSelect(emblaApi); }, 0);
-    emblaApi.on("reInit", onInit).on("reInit", onSelect).on("select", onSelect);
-    return () => clearTimeout(id);
-  }, [emblaApi, onInit, onSelect]);
+      const onInit = (a: CarouselApi) => {
+        setScrollSnaps(a.scrollSnapList());
+      };
 
-  return { selectedIndex, scrollSnaps, onDotButtonClick };
-}
+      const onReInit = (a: CarouselApi) => {
+        setScrollSnaps(a.scrollSnapList());
+        const engineOpts = a.internalEngine().options as CarouselOptions;
+        setResolvedSlidesPerView(
+          engineOpts.slidesPerView ?? opts?.slidesPerView,
+        );
+      };
 
-function usePrevNextButtons(emblaApi: EmblaCarouselType | undefined) {
-  const [prevBtnDisabled, setPrevBtnDisabled] = React.useState(true);
-  const [nextBtnDisabled, setNextBtnDisabled] = React.useState(true);
+      onInit(api);
+      onSelect(api);
+      onReInit(api);
 
-  const onPrevButtonClick = React.useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const onNextButtonClick = React.useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+      api.on("init", onInit);
+      api.on("select", onSelect);
+      api.on("reInit", onReInit);
+      api.on("reInit", onSelect);
 
-  const onSelect = React.useCallback((api: EmblaCarouselType) => {
-    setPrevBtnDisabled(!api.canScrollPrev());
-    setNextBtnDisabled(!api.canScrollNext());
-  }, []);
+      return () => {
+        api.off("init", onInit);
+        api.off("select", onSelect);
+        api.off("reInit", onReInit);
+        api.off("reInit", onSelect);
+      };
+    }, [api, opts?.slidesPerView]);
 
-  React.useEffect(() => {
-    if (!emblaApi) return;
-    const id = setTimeout(() => onSelect(emblaApi), 0);
-    emblaApi.on("reInit", onSelect).on("select", onSelect);
-    return () => clearTimeout(id);
-  }, [emblaApi, onSelect]);
+    React.useEffect(() => {
+      if (!api || !setApi) return;
+      setApi(api);
+    }, [api, setApi]);
 
-  return { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick };
-}
+    React.useEffect(() => {
+      if (!api || (!parallax && !opacity)) return;
 
-// ── Nav Buttons ──────────────────────────────
+      const parallaxFactor =
+        parallax && typeof parallax === "object" && parallax.factor !== undefined
+          ? parallax.factor
+          : 15;
+      const opacityFactor =
+        opacity && typeof opacity === "object" && opacity.factor !== undefined
+          ? opacity.factor
+          : 2.5;
+      const opacityMin =
+        opacity && typeof opacity === "object" && opacity.min !== undefined
+          ? opacity.min
+          : 0.3;
 
-type NavButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { className?: string };
+      const tween = () => {
+        const engine = api.internalEngine();
+        const scrollProgress = api.scrollProgress();
+        const slideNodes = api.slideNodes();
+        const locations = api.scrollSnapList();
 
-function PrevButton({ className, ...restProps }: NavButtonProps) {
-  return (
-    <button
-      type="button"
-      aria-label="Previous slide"
-      className={cn(
-        "inline-flex items-center justify-center size-8 rounded-full border bg-white/50 border-zinc-200/80 hover:bg-white hover:border-zinc-300 disabled:opacity-40 transition-colors cursor-pointer",
-        className,
-      )}
-      {...restProps}
-    >
-      <ChevronLeftIcon className="size-4" strokeWidth={2.5} />
-    </button>
-  );
-}
+        slideNodes.forEach((slide, index) => {
+          const target =
+            (slide.querySelector("[data-carousel-parallax]") as HTMLElement | null) ??
+            slide;
+          let distance = locations[index] - scrollProgress;
 
-function NextButton({ className, ...restProps }: NavButtonProps) {
-  return (
-    <button
-      type="button"
-      aria-label="Next slide"
-      className={cn(
-        "inline-flex items-center justify-center size-8 rounded-full border bg-white/50 border-zinc-200/80 hover:bg-white hover:border-zinc-300 disabled:opacity-40 transition-colors cursor-pointer",
-        className,
-      )}
-      {...restProps}
-    >
-      <ChevronRightIcon className="size-4" strokeWidth={2.5} />
-    </button>
-  );
-}
+          if (engine.options.loop) {
+            if (distance < -0.5) distance += 1;
+            if (distance > 0.5) distance -= 1;
+          }
 
-// ── Component ────────────────────────────────
+          if (parallax) {
+            const x = distance * parallaxFactor * 100;
+            target.style.transform =
+              orientation === "vertical"
+                ? `translate3d(0, ${x}%, 0)`
+                : `translate3d(${x}%, 0, 0)`;
+          }
 
-export function Carousel({
-  slides,
-  slidesPerView,
-  align,
-  containScroll,
-  dragFree = false,
-  loop = false,
-  axis = "x",
-  direction = "ltr",
-  autoplay = false,
-  autoScroll = false,
-  autoHeight = false,
-  fade: fadeProp = false,
-  wheelGestures: wheelGesturesProp = true,
-  classNames: classNamesProp = false,
-  parallax = false,
-  opacity = false,
-  lazyLoad = false,
-  showNavigation = false,
-  showPagination = false,
-  scrollToIndex,
-  breakpoints,
-  className,
-  viewportClassName,
-  containerClassName,
-  slideClassName,
-  styles,
-}: CarouselProps) {
-  const [plugins, setPlugins] = React.useState<EmblaPluginType[]>([]);
-  const [pluginsReady, setPluginsReady] = React.useState(false);
+          if (opacity) {
+            const value = Math.max(0, 1 - Math.abs(distance * opacityFactor));
+            slide.style.opacity = (
+              opacityMin +
+              value * (1 - opacityMin)
+            ).toString();
+          }
+        });
+      };
 
-  // Build plugins async
-  React.useEffect(() => {
-    let cancelled = false;
+      tween();
+      api.on("scroll", tween);
+      api.on("reInit", tween);
+      api.on("resize", tween);
 
-    async function buildPlugins() {
-      const active: EmblaPluginType[] = [];
+      return () => {
+        api.off("scroll", tween);
+        api.off("reInit", tween);
+        api.off("resize", tween);
+      };
+    }, [api, parallax, opacity, orientation]);
 
-      if (autoplay) {
-        const { default: Autoplay } = await import("embla-carousel-autoplay");
-        active.push(Autoplay(typeof autoplay === "object" ? autoplay : { delay: 4000 }));
-      }
-      if (autoScroll) {
-        const { default: AutoScroll } = await import("embla-carousel-auto-scroll");
-        active.push(AutoScroll(typeof autoScroll === "object" ? autoScroll : { speed: 2 }));
-      }
-      if (autoHeight) {
-        const { default: AutoHeight } = await import("embla-carousel-auto-height");
-        active.push(AutoHeight(typeof autoHeight === "object" ? autoHeight : {}));
-      }
-      if (fadeProp) {
-        const { default: Fade } = await import("embla-carousel-fade");
-        active.push(Fade(typeof fadeProp === "object" ? fadeProp : {}));
-      }
-      if (wheelGesturesProp) {
-        const { default: WheelGestures } = await import("embla-carousel-wheel-gestures");
-        active.push(WheelGestures(typeof wheelGesturesProp === "object" ? wheelGesturesProp : {}));
-      }
-      if (classNamesProp) {
-        const { default: ClassNames } = await import("embla-carousel-class-names");
-        active.push(ClassNames(typeof classNamesProp === "object" ? classNamesProp : {}));
-      }
+    React.useEffect(() => {
+      if (!api || !watchImages) return;
 
-      if (!cancelled) {
-        setPlugins(active);
-        setPluginsReady(true);
-      }
-    }
+      const handleLoad = () => api.reInit();
+      const cleanups: (() => void)[] = [];
 
-    buildPlugins();
-    return () => { cancelled = true; };
-  }, [autoplay, autoScroll, autoHeight, fadeProp, wheelGesturesProp, classNamesProp]);
-
-  // Core options
-  const coreOptions: EmblaOptionsType = React.useMemo(() => {
-    const opts: Record<string, unknown> = { dragFree, loop, axis, direction };
-    if (align !== undefined) opts.align = align;
-    if (containScroll !== undefined) opts.containScroll = containScroll;
-    if (breakpoints !== undefined) opts.breakpoints = breakpoints;
-    return opts as EmblaOptionsType;
-  }, [align, containScroll, dragFree, loop, axis, direction, breakpoints]);
-
-  // Resolved slidesPerView
-  const [resolvedSlidesPerView, setResolvedSlidesPerView] = React.useState<number | "auto" | undefined>(slidesPerView);
-
-  const slideStyle = React.useMemo(() => {
-    if (typeof resolvedSlidesPerView === "number") {
-      return { flex: `0 0 ${100 / resolvedSlidesPerView}%`, minWidth: 0 };
-    }
-    return undefined;
-  }, [resolvedSlidesPerView]);
-
-  // Initialize Embla
-  const [emblaRef, emblaApi] = useEmblaCarousel(coreOptions, plugins);
-
-  // scrollToIndex
-  React.useEffect(() => {
-    if (emblaApi && scrollToIndex !== undefined) {
-      emblaApi.scrollTo(scrollToIndex);
-    }
-  }, [emblaApi, scrollToIndex]);
-
-  // autoHeight: ensure correct height after images load
-  React.useEffect(() => {
-    if (!emblaApi || !autoHeight) return;
-
-    const slideNodes = emblaApi.slideNodes();
-    const handleLoad = () => emblaApi.reInit();
-
-    slideNodes.forEach((slide, i) => {
-      const images = slide.querySelectorAll("img");
-      images.forEach((img) => {
-        if (i === 0 && img.loading === "lazy") img.loading = "eager";
-        if (!img.complete) {
+      api.slideNodes().forEach((slide) => {
+        slide.querySelectorAll("img").forEach((img) => {
+          if (img.complete) return;
           img.addEventListener("load", handleLoad, { once: true });
           img.addEventListener("error", handleLoad, { once: true });
-        }
-      });
-    });
-
-    const raf = requestAnimationFrame(() => emblaApi.reInit());
-
-    return () => {
-      cancelAnimationFrame(raf);
-      slideNodes.forEach((slide) => {
-        slide.querySelectorAll("img").forEach((img) => {
-          img.removeEventListener("load", handleLoad);
-          img.removeEventListener("error", handleLoad);
+          cleanups.push(() => {
+            img.removeEventListener("load", handleLoad);
+            img.removeEventListener("error", handleLoad);
+          });
         });
       });
-    };
-  }, [emblaApi, autoHeight]);
 
-  // Breakpoint-responsive slidesPerView
-  React.useEffect(() => {
-    if (!emblaApi) return;
+      return () => cleanups.forEach((fn) => fn());
+    }, [api, watchImages]);
 
-    const onReInit = () => {
-      const engine = emblaApi.internalEngine();
-      if (!engine) return;
+    const handleKeyDown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const isHorizontal = orientation === "horizontal";
 
-      const engineOptions = engine.options as CarouselBreakpointOptions;
-      if (engineOptions.slidesPerView !== undefined) {
-        setResolvedSlidesPerView(engineOptions.slidesPerView);
-      } else {
-        setResolvedSlidesPerView(slidesPerView);
-      }
-    };
+        if (event.key === "ArrowLeft" && isHorizontal) {
+          event.preventDefault();
+          scrollPrev();
+        } else if (event.key === "ArrowRight" && isHorizontal) {
+          event.preventDefault();
+          scrollNext();
+        } else if (event.key === "ArrowUp" && !isHorizontal) {
+          event.preventDefault();
+          scrollPrev();
+        } else if (event.key === "ArrowDown" && !isHorizontal) {
+          event.preventDefault();
+          scrollNext();
+        }
 
-    emblaApi.on("reInit", onReInit);
-    emblaApi.on("init", onReInit);
-    onReInit();
+        onKeyDown?.(event);
+      },
+      [scrollPrev, scrollNext, orientation, onKeyDown],
+    );
 
-    return () => {
-      emblaApi.off("reInit", onReInit);
-      emblaApi.off("init", onReInit);
-    };
-  }, [emblaApi, slidesPerView]);
+    const value = React.useMemo<CarouselContextValue>(
+      () => ({
+        carouselRef,
+        api,
+        orientation,
+        scrollPrev,
+        scrollNext,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        scrollSnaps,
+        scrollTo,
+        resolvedSlidesPerView,
+      }),
+      [
+        carouselRef,
+        api,
+        orientation,
+        scrollPrev,
+        scrollNext,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        scrollSnaps,
+        scrollTo,
+        resolvedSlidesPerView,
+      ],
+    );
 
-  // Lazy load tracking
-  const [slidesInView, setSlidesInView] = React.useState<number[]>([]);
-
-  const updateSlidesInView = React.useCallback((api: EmblaCarouselType) => {
-    setSlidesInView((prev) => {
-      if (prev.length === api.slideNodes().length) return prev;
-      const inView = api.slidesInView();
-      const merged = new Set([...prev, ...inView]);
-      if (merged.size === prev.length) return prev;
-      return Array.from(merged);
-    });
-  }, []);
-
-  React.useEffect(() => {
-    if (!emblaApi || !lazyLoad) return;
-    updateSlidesInView(emblaApi);
-    emblaApi.on("slidesInView", updateSlidesInView);
-    emblaApi.on("reInit", updateSlidesInView);
-    return () => {
-      emblaApi.off("slidesInView", updateSlidesInView);
-      emblaApi.off("reInit", updateSlidesInView);
-    };
-  }, [emblaApi, lazyLoad, updateSlidesInView]);
-
-  // Parallax & opacity tween
-  const simpleTween = React.useCallback((api: EmblaCarouselType) => {
-    const engine = api.internalEngine();
-    const scrollProgress = api.scrollProgress();
-    const slideNodes = api.slideNodes();
-    const locations = api.scrollSnapList();
-
-    slideNodes.forEach((slide, index) => {
-      const targetNode = slide.querySelector(".carousel__parallax-layer") as HTMLElement || slide;
-      if (!targetNode) return;
-
-      let distance = locations[index] - scrollProgress;
-
-      if (engine.options.loop) {
-        if (distance < -0.5) distance += 1;
-        if (distance > 0.5) distance -= 1;
-      }
-
-      if (parallax) {
-        const factor = 15;
-        const x = distance * factor * 100;
-        targetNode.style.transform = axis === "y"
-          ? `translate3d(0, ${x}%, 0)`
-          : `translate3d(${x}%, 0, 0)`;
-      }
-
-      if (opacity) {
-        const factor = 2.5;
-        const opacityValue = Math.max(0, 1 - Math.abs(distance * factor));
-        slide.style.opacity = (0.3 + opacityValue * 0.7).toString();
-      }
-    });
-  }, [parallax, opacity, axis]);
-
-  React.useEffect(() => {
-    if (!emblaApi || (!parallax && !opacity)) return;
-
-    const onScroll = () => simpleTween(emblaApi);
-    emblaApi.on("scroll", onScroll);
-    emblaApi.on("reInit", onScroll);
-    emblaApi.on("resize", onScroll);
-    simpleTween(emblaApi);
-
-    return () => {
-      emblaApi.off("scroll", onScroll);
-      emblaApi.off("reInit", onScroll);
-      emblaApi.off("resize", onScroll);
-    };
-  }, [emblaApi, simpleTween, parallax, opacity]);
-
-  // Hooks
-  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
-  const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } = usePrevNextButtons(emblaApi);
-
-  const isVertical = axis === "y";
-  const isRTL = direction === "rtl";
-
-  if (!pluginsReady && (autoplay || autoScroll || autoHeight || fadeProp || wheelGesturesProp || classNamesProp)) {
-    return null;
-  }
-
-  return (
-    <div className={className} dir={isRTL ? "rtl" : undefined}>
-      <div
-        className={cn("overflow-hidden", isVertical && "h-125", autoHeight && "transition-[height] duration-200", viewportClassName)}
-        ref={emblaRef}
-      >
-        <div className={cn(
-          "flex",
-          isVertical ? "flex-col h-full" : "touch-pan-y touch-pinch-zoom",
-          autoHeight && "items-start",
-          containerClassName,
-        )}>
-          {slides.map((slide, index) => {
-            const isLoaded = !lazyLoad || slidesInView.includes(index);
-            return (
-              <div
-                className={cn("flex-none min-w-0 relative", slideClassName)}
-                key={index}
-                style={slideStyle}
-              >
-                <div className={cn("carousel__parallax-layer w-full", !autoHeight && "h-full")}>
-                  {isLoaded ? slide : (
-                    <div className="w-full h-full bg-zinc-100 animate-pulse rounded-lg min-h-50" />
-                  )}
-                </div>
-              </div>
-            );
-          })}
+    return (
+      <CarouselContext.Provider value={value}>
+        <div
+          ref={ref}
+          role="region"
+          aria-roledescription="carousel"
+          dir={opts?.direction}
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          className={cn("relative", className)}
+          {...props}
+        >
+          {children}
         </div>
-      </div>
-
-      {(showNavigation || showPagination) && (
-        <div className={cn(styles?.controls || "flex justify-between items-center gap-5 mt-4 px-1")}>
-          {showNavigation && (
-            <div className={cn(styles?.navigation || "flex gap-2 items-center")}>
-              <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} className={styles?.prevButton} />
-              <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} className={styles?.nextButton} />
-            </div>
-          )}
-
-          {showPagination && (
-            <div className={cn(styles?.pagination || "flex flex-wrap justify-end items-center gap-2.5 leading-none")}>
-              {scrollSnaps.map((_, index) => (
-                <button
-                  type="button"
-                  key={index}
-                  aria-label={`Go to slide ${index + 1}`}
-                  onClick={() => onDotButtonClick(index)}
-                  className={cn(
-                    styles?.dot
-                      ? cn(styles.dot, index === selectedIndex ? "opacity-100 bg-current scale-110 border-current!" : "opacity-40")
-                      : cn(
-                        "w-2.5 h-2.5 rounded-full border bg-transparent flex items-center justify-center cursor-pointer touch-manipulation transition-all duration-300",
-                        index === selectedIndex
-                          ? "border-zinc-800 border-[2.5px] scale-110"
-                          : "border-zinc-300 hover:border-zinc-400 border-[1.5px]",
-                      ),
-                  )}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+      </CarouselContext.Provider>
+    );
+  },
+);
 
 Carousel.displayName = "Carousel";
