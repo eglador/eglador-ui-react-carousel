@@ -1,6 +1,6 @@
 {
   "name": "eglador-ui-react-carousel",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "React Carousel component for Eglador UI",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -31,8 +31,21 @@
     "components",
     "react",
     "ui",
-    "carousel"
+    "carousel",
+    "slider",
+    "embla",
+    "embla-carousel",
+    "tailwindcss",
+    "tailwindcss-v4",
+    "nextjs",
+    "vite",
+    "responsive",
+    "touch",
+    "typescript"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "author": {
     "name": "Kenan Gündoğan",
     "email": "kenangundogann@gmail.com",
