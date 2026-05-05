@@ -33,7 +33,17 @@
     "ui",
     "carousel"
   ],
-  "author": "Eglador",
+  "author": {
+    "name": "Kenan Gündoğan",
+    "email": "kenangundogann@gmail.com",
+    "url": "https://github.com/kenangundogan"
+  },
+  "contributors": [
+    {
+      "name": "Eglador",
+      "url": "https://github.com/eglador"
+    }
+  ],
   "license": "MIT",
   "type": "commonjs",
   "bugs": {
