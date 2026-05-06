@@ -13,6 +13,11 @@ const preview: Preview = {
       test: "todo",
     },
     layout: "padded",
+    options: {
+      storySort: {
+        order: ["Welcome", "Installation", "Getting Started", "Carousel"],
+      },
+    },
   },
 };
 

@@ -1,0 +1,134 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Installation" />
+
+# Installation
+
+Package installation, peer dependencies, and Tailwind v4 integration.
+
+---
+
+## 1. Install the package
+
+```bash
+npm install eglador-ui-react-carousel
+```
+
+```bash
+yarn add eglador-ui-react-carousel
+```
+
+```bash
+pnpm add eglador-ui-react-carousel
+```
+
+---
+
+## 2. Peer dependencies
+
+The following peer dependencies must be present in your project:
+
+<table>
+  <thead>
+    <tr>
+      <th align="left">Package</th>
+      <th align="left">Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>react</code></td>
+      <td><code>{">= 18"}</code></td>
+    </tr>
+    <tr>
+      <td><code>react-dom</code></td>
+      <td><code>{">= 18"}</code></td>
+    </tr>
+    <tr>
+      <td><code>tailwindcss</code></td>
+      <td><code>^4.0.0</code></td>
+    </tr>
+  </tbody>
+</table>
+
+These are typically already present in modern React projects (Next.js, Vite, Remix).
+
+---
+
+## 3. Add `@source` for Tailwind v4
+
+Tailwind needs to scan classes inside the package. Add the `@source` directive to your global stylesheet:
+
+```css
+@import "tailwindcss";
+
+@source "../node_modules/eglador-ui-react-carousel";
+```
+
+The `@source` path varies based on your CSS file location:
+
+<table>
+  <thead>
+    <tr>
+      <th align="left">Framework</th>
+      <th align="left">CSS file</th>
+      <th align="left"><code>@source</code> path</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Next.js (App Router)</td>
+      <td><code>app/globals.css</code></td>
+      <td><code>../node_modules/eglador-ui-react-carousel</code></td>
+    </tr>
+    <tr>
+      <td>Next.js (<code>src/</code>)</td>
+      <td><code>src/app/globals.css</code></td>
+      <td><code>../../node_modules/eglador-ui-react-carousel</code></td>
+    </tr>
+    <tr>
+      <td>Vite + React</td>
+      <td><code>src/index.css</code></td>
+      <td><code>../node_modules/eglador-ui-react-carousel</code></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 4. Optional Embla plugins
+
+Embla plugins (Autoplay, Fade, AutoScroll, etc.) are bundled with the package by default. If you want explicit control over versions, install them directly:
+
+```bash
+npm install embla-carousel-autoplay embla-carousel-fade embla-carousel-auto-scroll embla-carousel-auto-height
+```
+
+Use them via the `plugins` prop:
+
+```tsx
+import Autoplay from "embla-carousel-autoplay";
+import Fade from "embla-carousel-fade";
+
+<Carousel plugins={[Autoplay({ delay: 4000 }), Fade()]}>
+  ...
+</Carousel>
+```
+
+---
+
+## 5. Verify
+
+Import a component — TypeScript should autocomplete:
+
+```tsx
+import { Carousel } from "eglador-ui-react-carousel";
+```
+
+Continue with **Getting Started** for your first carousel.
+
+---
+
+## Issues?
+
+Open an [issue on GitHub](https://github.com/eglador/eglador-ui-react-carousel/issues).

@@ -1,0 +1,190 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselPagination,
+} from "../components/carousel";
+
+<Meta title="Getting Started" />
+
+# Getting Started
+
+Build your first carousel in a few lines.
+
+> If you haven't installed the package yet, see the **Installation** page.
+
+---
+
+## 1. Import the components
+
+```tsx
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselPagination,
+} from "eglador-ui-react-carousel";
+```
+
+The carousel uses a **compound component** pattern — `Carousel` is the root provider, `CarouselContent` wraps slides, `CarouselItem` is each slide, `CarouselPrevious` / `CarouselNext` / `CarouselPagination` are controls.
+
+---
+
+## 2. Add slides as children
+
+Each slide is a `<CarouselItem>` containing whatever JSX you want. No `slides[]` array prop — just write JSX:
+
+```tsx
+<Carousel opts={{ loop: true }}>
+  <CarouselContent>
+    <CarouselItem>Slide 1</CarouselItem>
+    <CarouselItem>Slide 2</CarouselItem>
+    <CarouselItem>Slide 3</CarouselItem>
+  </CarouselContent>
+</Carousel>
+```
+
+---
+
+## 3. Add controls
+
+Drop in navigation buttons and pagination:
+
+```tsx
+<Carousel opts={{ loop: true }}>
+  <CarouselContent>
+    {items.map((item) => (
+      <CarouselItem key={item.id}>{item.content}</CarouselItem>
+    ))}
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+  <CarouselPagination />
+</Carousel>
+```
+
+---
+
+## 4. Configure Embla options
+
+Pass any [Embla option](https://www.embla-carousel.com/api/options/) via `opts`:
+
+```tsx
+<Carousel
+  opts={{
+    loop: true,
+    slidesPerView: 1,
+    align: "start",
+    breakpoints: {
+      "(min-width: 768px)": { slidesPerView: 3 },
+    },
+  }}
+  spaceBetween={16}
+>
+  ...
+</Carousel>
+```
+
+---
+
+## Result
+
+Live preview of a basic carousel:
+
+<div style={{ padding: 24, border: "1px solid #e4e4e7", borderRadius: 12, background: "#fafafa", marginTop: 16 }}>
+  <Carousel opts={{ loop: true, slidesPerView: 1, breakpoints: { "(min-width: 768px)": { slidesPerView: 3 } } }} spaceBetween={16}>
+    <CarouselContent>
+      {[1, 2, 3, 4, 5, 6].map((n) => (
+        <CarouselItem key={n}>
+          <div className="h-48 flex items-center justify-center rounded-3xl text-6xl font-semibold text-zinc-700 bg-zinc-100">
+            {n}
+          </div>
+        </CarouselItem>
+      ))}
+    </CarouselContent>
+    <CarouselPrevious />
+    <CarouselNext />
+    <CarouselPagination />
+  </Carousel>
+</div>
+
+---
+
+## With Embla plugins
+
+For autoplay, fade, auto-height etc., import the Embla plugin and pass it via `plugins`:
+
+```tsx
+import Autoplay from "embla-carousel-autoplay";
+import Fade from "embla-carousel-fade";
+
+<Carousel
+  opts={{ loop: true }}
+  plugins={[Autoplay({ delay: 4000 }), Fade()]}
+>
+  <CarouselContent>...</CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>
+```
+
+---
+
+## Custom controls with `useCarousel`
+
+Use the `useCarousel()` hook inside Carousel children to read state and build your own UI:
+
+```tsx
+import { useCarousel } from "eglador-ui-react-carousel";
+
+function SlideCounter() {
+  const { selectedIndex, scrollSnaps } = useCarousel();
+  return (
+    <p>
+      Slide {selectedIndex + 1} / {scrollSnaps.length}
+    </p>
+  );
+}
+
+<Carousel>
+  <CarouselContent>...</CarouselContent>
+  <SlideCounter />
+</Carousel>
+```
+
+---
+
+## Programmatic control with `setApi`
+
+For controlling the carousel from outside (e.g. external buttons), use the `setApi` callback:
+
+```tsx
+import { useState } from "react";
+import { type CarouselApi } from "eglador-ui-react-carousel";
+
+const [api, setApi] = useState<CarouselApi>();
+
+<Carousel setApi={setApi}>
+  <CarouselContent>...</CarouselContent>
+</Carousel>
+
+<button onClick={() => api?.scrollTo(0)}>Go to first</button>
+```
+
+---
+
+## Next Steps
+
+- Pick a story from **Carousel/** in the sidebar → tweak props live in the Controls panel
+- Click **Show code** in any story → copy-paste-ready usage examples
+- Try different `paginationType` values (`dots`, `fraction`, `numbers`, `dynamic`, `scrollbar`)
+- Position navigation/pagination anywhere with the `position` prop (16 variants each)
+
+---
+
+For bugs or suggestions, open an [issue on GitHub](https://github.com/eglador/eglador-ui-react-carousel/issues).

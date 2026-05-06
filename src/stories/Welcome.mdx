@@ -1,0 +1,125 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Welcome" />
+
+<img src=".github/eglador-logo.svg" alt="eglador-ui-react-carousel" width="160" style={{ marginBottom: 24 }} />
+
+# eglador-ui-react-carousel
+
+<div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+  <img src="https://img.shields.io/npm/v/eglador-ui-react-carousel?style=flat-square&color=blue" alt="npm version" />
+  <img src="https://img.shields.io/npm/dm/eglador-ui-react-carousel?style=flat-square&color=green" alt="npm downloads" />
+  <img src="https://img.shields.io/npm/l/eglador-ui-react-carousel?style=flat-square" alt="license" />
+  <img src="https://img.shields.io/badge/embla--carousel-v8-8B5CF6?style=flat-square" alt="embla-carousel v8" />
+  <img src="https://img.shields.io/badge/tailwindcss-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="tailwind v4" />
+  <img src="https://img.shields.io/badge/react-%3E%3D18-61DAFB?style=flat-square&logo=react&logoColor=white" alt="react >= 18" />
+  <img src="https://img.shields.io/badge/typescript-ready-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="typescript" />
+</div>
+
+A modern, headless, compound-component carousel library built on **Embla Carousel** and **Tailwind CSS v4** for React-based projects.
+
+---
+
+## Installation
+
+```bash
+npm install eglador-ui-react-carousel
+```
+
+## Setup
+
+Add the following to your global stylesheet (e.g. `app/globals.css`):
+
+```css
+@import "tailwindcss";
+@source "../node_modules/eglador-ui-react-carousel";
+```
+
+## Quick Start
+
+```tsx
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselPagination,
+} from "eglador-ui-react-carousel";
+```
+
+---
+
+## Components
+
+<table>
+  <thead>
+    <tr>
+      <th align="left">Component</th>
+      <th align="left">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Carousel</code></td>
+      <td>Root provider — Embla options, plugins, effects (parallax, opacity, autoHeight)</td>
+    </tr>
+    <tr>
+      <td><code>CarouselContent</code></td>
+      <td>Viewport (overflow-hidden) + flex container that wraps items</td>
+    </tr>
+    <tr>
+      <td><code>CarouselItem</code></td>
+      <td>Individual slide; auto-sized based on <code>slidesPerView</code></td>
+    </tr>
+    <tr>
+      <td><code>CarouselPrevious</code> / <code>CarouselNext</code></td>
+      <td>Navigation buttons with 16 position variants</td>
+    </tr>
+    <tr>
+      <td><code>CarouselNavigation</code></td>
+      <td>Group wrapper for Prev + Next together</td>
+    </tr>
+    <tr>
+      <td><code>CarouselPagination</code></td>
+      <td>5 types (dots, fraction, numbers, dynamic, scrollbar) × 16 positions</td>
+    </tr>
+    <tr>
+      <td><code>CarouselAutoplayProgress</code></td>
+      <td>Circular SVG countdown for autoplay</td>
+    </tr>
+    <tr>
+      <td><code>useCarousel()</code></td>
+      <td>Hook for custom controls and reading carousel state</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Features
+
+- **Compound API** — `Carousel`, `CarouselContent`, `CarouselItem`, `CarouselPrevious/Next`, `CarouselPagination` (composition over configuration)
+- **TypeScript-first** — full type safety on Embla options and plugins
+- **Position system** — 16 pagination positions, 16 navigation positions (overlay + outside variants)
+- **Pagination types** — `dots`, `fraction`, `numbers`, `dynamic`, `scrollbar`
+- **Autoplay progress** — circular SVG countdown indicator
+- **AutoHeight** — viewport adjusts to active slide
+- **Parallax + Opacity** — Embla's official tween algorithm built-in
+- **Plugin support** — pass any Embla plugin (`Autoplay`, `Fade`, `AutoScroll`, etc.)
+- **`useCarousel` hook** — build fully custom controls
+- **RTL & vertical** — first-class support
+
+---
+
+## Links
+
+- [GitHub](https://github.com/eglador/eglador-ui-react-carousel)
+- [npm](https://www.npmjs.com/package/eglador-ui-react-carousel)
+- [Embla Carousel](https://www.embla-carousel.com)
+
+---
+
+**Author:** Kenan Gündoğan — [github.com/kenangundogan](https://github.com/kenangundogan)
+
+Maintained under [Eglador](https://github.com/eglador).
