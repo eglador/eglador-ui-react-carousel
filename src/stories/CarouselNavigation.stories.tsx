@@ -48,7 +48,7 @@ const meta: Meta<StoryArgs> = {
     docs: {
       description: {
         component:
-          "Prev/Next butonları için 8 pozisyon. İki kullanım: bireysel (`<CarouselPrevious position=...>` + `<CarouselNext position=...>`) veya grup (`<CarouselNavigation position=...>` Prev+Next bir arada). `showGroup` toggle'ı ile aralarında geç.",
+          "8 positions for the Prev/Next buttons. Two usage modes: individual (`<CarouselPrevious position=...>` + `<CarouselNext position=...>`) or grouped (`<CarouselNavigation position=...>` with Prev+Next together). Toggle between them via `showGroup`.",
       },
     },
   },
@@ -63,18 +63,18 @@ const meta: Meta<StoryArgs> = {
   argTypes: {
     showGroup: {
       control: "boolean",
-      description: "CarouselNavigation grup wrapper'ı (true) vs bireysel (false)",
+      description: "Grouped CarouselNavigation wrapper (true) vs individual buttons (false)",
     },
     groupPosition: {
       control: "select",
       options: ALL_POSITIONS,
-      description: "Grup pozisyonu (showGroup=true)",
+      description: "Group position (when showGroup=true)",
       if: { arg: "showGroup", truthy: true },
     },
     prevPosition: {
       control: "select",
       options: ALL_POSITIONS,
-      description: "Bireysel Prev pozisyonu (showGroup=false)",
+      description: "Individual Prev position (when showGroup=false)",
       if: { arg: "showGroup", truthy: false },
     },
     nextPosition: {
@@ -86,7 +86,7 @@ const meta: Meta<StoryArgs> = {
     outsidePadding: {
       control: "boolean",
       description:
-        "Outside pozisyonların görünmesi için dış container'a padding ekle",
+        "Add padding to the outer container so outside positions are visible",
     },
     loop: { control: "boolean" },
   },

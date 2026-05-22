@@ -17,7 +17,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          "Default kontrol component'leri yerine kendi UI'ınızı kurun. `useCarousel()` children içinden carousel state'ini okur. `setApi` callback'i ile dış state'e Embla API'sini sızdırır (programatik kontrol için).",
+          "Build your own UI instead of the default controls. `useCarousel()` reads carousel state from inside the children; `setApi` callback exposes the Embla API to outer state for programmatic control.",
       },
     },
   },
@@ -44,7 +44,7 @@ export const UseCarouselHook: Story = {
     docs: {
       description: {
         story:
-          "`useCarousel()` hook'u Carousel children'ı içinde state okur. Burada aktif slide indeksini ve toplam slide sayısını gösteren bir sayaç.",
+          "`useCarousel()` reads state from inside the Carousel children. Here a counter that shows the active slide index and total slide count.",
       },
       source: {
         code: `import { Carousel, CarouselContent, CarouselItem, useCarousel } from "eglador-ui-react-carousel";
@@ -97,7 +97,7 @@ export const SetApi: Story = {
     docs: {
       description: {
         story:
-          "`setApi` prop'u Carousel oluşturulduğunda Embla API'sini dış state'e iletir. Sonrasında `api.scrollTo(index)` gibi metotlarla istediğiniz yerden carousel'ı kontrol edebilirsiniz.",
+          "The `setApi` prop forwards the Embla API to outer state when the Carousel mounts. You can then control the carousel from anywhere via methods like `api.scrollTo(index)`.",
       },
       source: {
         code: `import { useState } from "react";
@@ -117,10 +117,10 @@ export function MyCarousel() {
       </Carousel>
 
       <div>
-        <button onClick={() => api?.scrollTo(0)}>İlk</button>
-        <button onClick={() => api?.scrollPrev()}>Önceki</button>
-        <button onClick={() => api?.scrollNext()}>Sonraki</button>
-        <button onClick={() => api?.scrollTo(2)}>Son</button>
+        <button onClick={() => api?.scrollTo(0)}>First</button>
+        <button onClick={() => api?.scrollPrev()}>Previous</button>
+        <button onClick={() => api?.scrollNext()}>Next</button>
+        <button onClick={() => api?.scrollTo(2)}>Last</button>
       </div>
     </>
   );
@@ -149,28 +149,28 @@ export function MyCarousel() {
             onClick={() => api?.scrollTo(0)}
             className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 rounded-lg font-medium transition cursor-pointer"
           >
-            İlk
+            First
           </button>
           <button
             type="button"
             onClick={() => api?.scrollPrev()}
             className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 rounded-lg font-medium transition cursor-pointer"
           >
-            Önceki
+            Previous
           </button>
           <button
             type="button"
             onClick={() => api?.scrollNext()}
             className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 rounded-lg font-medium transition cursor-pointer"
           >
-            Sonraki
+            Next
           </button>
           <button
             type="button"
             onClick={() => api?.scrollTo(3)}
             className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 rounded-lg font-medium transition cursor-pointer"
           >
-            Son
+            Last
           </button>
         </div>
       </StoryFrame>

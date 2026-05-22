@@ -40,8 +40,8 @@ const NAVIGATION_POSITIONS: Array<CarouselButtonPosition | "default"> = [
   "bottom-right-outside",
 ];
 
-// AutoHeight aktifken slide'ların yüksekliklerini değişkenleştirmek için
-// (Tailwind class string'ler source'ta görünmeli ki üretilsin)
+// Vary slide heights so the effect is visible when AutoHeight is enabled.
+// (Tailwind class strings must appear in source so they are generated.)
 const VARIABLE_HEIGHTS = [
   "h-40",
   "h-72",
@@ -123,7 +123,7 @@ const meta: Meta<StoryArgs> = {
     docs: {
       description: {
         component:
-          "Tek noktadan tüm özelliklerin test edildiği master playground. Controls panelinden orientation, slidesPerView, breakpoints, plugin'ler (Autoplay, Fade) ve navigation/pagination pozisyonlarını canlı değiştir. AutoScroll farklı bir layout gerektirdiğinden ayrı story.",
+          "Master playground for testing every option in one place. Use the Controls panel to switch orientation, slidesPerView, breakpoints, plugins (Autoplay, Fade), and navigation/pagination positions live. AutoScroll lives in a separate story because it needs a different layout.",
       },
     },
   },
@@ -178,7 +178,7 @@ const meta: Meta<StoryArgs> = {
     spaceBetween: {
       control: { type: "number", min: 0, max: 64, step: 2 },
       table: { category: "Behavior" },
-      description: "Slide'lar arası boşluk (px)",
+      description: "Gap between slides (in pixels)",
     },
     // ── Effects ────────────────────────────
     parallax: { control: "boolean", table: { category: "Effects" } },
@@ -197,18 +197,18 @@ const meta: Meta<StoryArgs> = {
       control: "select",
       options: ["dots", "fraction", "numbers", "dynamic", "scrollbar"],
       table: { category: "Pagination" },
-      description: "Pagination türü",
+      description: "Pagination type",
     },
     paginationPosition: {
       control: "select",
       options: PAGINATION_POSITIONS,
       table: { category: "Pagination" },
-      description: '"default" = static, alt-merkezli',
+      description: '"default" = static, bottom-centered',
     },
     paginationDark: {
       control: "boolean",
       table: { category: "Pagination" },
-      description: "Dot/text rengini overlay'e uygun beyaz yap (dots/numbers/fraction)",
+      description: "Switch dot/text color to white for overlay backgrounds (dots/numbers/fraction)",
     },
     // ── Plugins ────────────────────────────
     enableAutoplay: { control: "boolean", table: { category: "Plugins" } },
@@ -219,14 +219,14 @@ const meta: Meta<StoryArgs> = {
     showAutoplayProgress: {
       control: "boolean",
       table: { category: "Plugins" },
-      description: "Autoplay countdown circle (sadece autoplay aktifken görünür)",
+      description: "Autoplay countdown circle (only visible while autoplay is active)",
       if: { arg: "enableAutoplay", truthy: true },
     },
     autoplayProgressPosition: {
       control: "select",
       options: AUTOPLAY_PROGRESS_POSITIONS,
       table: { category: "Plugins" },
-      description: "Autoplay progress circle pozisyonu (8 overlay)",
+      description: "Autoplay progress circle position (8 overlay slots)",
       if: { arg: "showAutoplayProgress", truthy: true },
     },
     enableFade: { control: "boolean", table: { category: "Plugins" } },
@@ -234,7 +234,7 @@ const meta: Meta<StoryArgs> = {
       control: "boolean",
       table: { category: "Plugins" },
       description:
-        "AutoHeight plugin + viewport CSS transition + watchImages. Slide yükseklikleri değişkenleşir (görsel etki için)",
+        "AutoHeight plugin + viewport CSS transition + watchImages. Slide heights vary (just to make the effect visible).",
     },
   },
   render: (args) => {
