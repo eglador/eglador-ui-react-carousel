@@ -27,7 +27,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          "Embla'nın resmi parallax/opacity tween pattern'leri ile aynı algoritmayı kullanan görsel efektler. `slideRegistry`, `slideLooper.loopPoints`, `slidesInView` ile slidesPerView>1 ve loop durumlarında doğru çalışır.",
+          "Visual effects using the same algorithm as Embla's official parallax/opacity tween patterns. Works correctly with `slidesPerView>1` and `loop` thanks to `slideRegistry`, `slideLooper.loopPoints`, and `slidesInView`.",
       },
     },
   },
@@ -43,7 +43,7 @@ export const Parallax: Story = {
     docs: {
       description: {
         story:
-          "Parallax efekti slide içindeki bir wrapper'a uygulanır. CarouselItem'ı `overflow-hidden` ile sarmala, içine `data-carousel-parallax` attribute'lu bir div koy ve gerçek içeriği orada render et — slide kayarken iç katman farklı hızda kayar.",
+          "The parallax effect applies to a wrapper inside the slide. Wrap the CarouselItem with `overflow-hidden`, place a `data-carousel-parallax` div inside, and render the real content there — the inner layer pans at a different speed as the slide scrolls.",
       },
       source: {
         code: `import {
@@ -67,7 +67,7 @@ export function MyCarousel() {
       <CarouselContent>
         {slides.map((s) => (
           <CarouselItem key={s.num} className="overflow-hidden rounded-3xl">
-            {/* data-carousel-parallax: bu element parallax target olur */}
+            {/* data-carousel-parallax: this element becomes the parallax target */}
             <div data-carousel-parallax>
               <div className={\`h-[420px] \${s.gradient} flex items-center justify-center\`}>
                 <p className="text-white text-8xl font-bold">{s.num}</p>
@@ -114,7 +114,7 @@ export const ParallaxStrong: Story = {
     docs: {
       description: {
         story:
-          "`parallax={{ factor }}` ile efektin gücü ayarlanabilir. Default 0.2 (Embla TWEEN_FACTOR_BASE). Burada 0.5 ile daha belirgin parallax.",
+          "Adjust the effect strength via `parallax={{ factor }}`. Default is 0.2 (Embla TWEEN_FACTOR_BASE). Here 0.5 produces a more pronounced parallax.",
       },
       source: {
         code: `<Carousel opts={{ loop: true }} parallax={{ factor: 0.5 }}>
@@ -122,7 +122,7 @@ export const ParallaxStrong: Story = {
     {slides.map((s) => (
       <CarouselItem key={s.num} className="overflow-hidden rounded-3xl">
         <div data-carousel-parallax>
-          {/* slide içeriği */}
+          {/* slide content */}
         </div>
       </CarouselItem>
     ))}
@@ -162,7 +162,7 @@ export const Opacity: Story = {
     docs: {
       description: {
         story:
-          "Opacity tween aktif slide'ı %100, mesafeye göre uzakta olanları soldurur. En iyi sonuç slidesPerView 3+ ile alınır. Burada 6 renkli slide, ortadaki tam opaklıkta, yan slide'lar %15'e kadar fade olur (`min: 0.15`).",
+          "Opacity tween keeps the active slide at 100% and fades others by distance. Best results with `slidesPerView` 3+. Here 6 colored slides — the middle one is fully opaque while side slides fade down to 15% (`min: 0.15`).",
       },
       source: {
         code: `import {
@@ -239,7 +239,7 @@ export const FadeTransition: Story = {
     docs: {
       description: {
         story:
-          "`embla-carousel-fade` plugin'i slide'lar arası geçişte translate yerine opacity kullanır. Hero/banner alanları için ideal. `slidesPerView=1` ve `loop=true` önerilir.",
+          "The `embla-carousel-fade` plugin uses opacity instead of translate for slide transitions. Ideal for hero/banner sections. `slidesPerView=1` and `loop=true` are recommended.",
       },
       source: {
         code: `import Fade from "embla-carousel-fade";

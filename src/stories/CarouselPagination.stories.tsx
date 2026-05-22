@@ -86,7 +86,7 @@ const meta: Meta<StoryArgs> = {
     docs: {
       description: {
         component:
-          "16 pozisyon: 4 center overlay + 4 corner overlay + 4 center outside + 4 corner outside. Outside pozisyonlar Carousel'in dışına yerleşir, kesilmemeleri için dış container'a yatay padding gerekir (`outsidePadding` toggle).",
+          "16 positions: 4 center overlay + 4 corner overlay + 4 center outside + 4 corner outside. Outside positions sit beyond the Carousel itself; the outer container needs horizontal padding to keep them from being clipped (toggle `outsidePadding`).",
       },
     },
   },
@@ -101,20 +101,20 @@ const meta: Meta<StoryArgs> = {
     type: {
       control: "select",
       options: ["dots", "fraction", "numbers", "dynamic", "scrollbar"],
-      description: "Pagination türü (dots, fraction, numbers, dynamic, scrollbar)",
+      description: "Pagination type (dots, fraction, numbers, dynamic, scrollbar)",
     },
     position: {
       control: "select",
       options: ALL_POSITIONS,
-      description: "16 pozisyondan biri",
+      description: "One of 16 positions",
     },
     outsidePadding: {
       control: "boolean",
-      description: "Dış container'a yatay padding ekle (px-12 py-12)",
+      description: "Add horizontal padding to the outer container (px-12 py-12)",
     },
     isDark: {
       control: "boolean",
-      description: "Dot rengini overlay'e uygun beyaz yap",
+      description: "Switch the dot color to white for overlay backgrounds",
     },
     loop: { control: "boolean" },
   },
